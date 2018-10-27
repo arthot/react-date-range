@@ -1,7 +1,7 @@
 import classnames from 'classnames';
 import {
   addMonths,
-  areIntervalsOverlapping,
+  areRangesOverlapping,
   startOfMonth,
   endOfMonth,
   startOfWeek,
@@ -37,7 +37,14 @@ export function calcFocusDate(currentFocusedDate, props) {
     start: startOfMonth(currentFocusedDate),
     end: endOfMonth(addMonths(currentFocusedDate, months - 1)),
   };
-  if (areIntervalsOverlapping(targetInterval, currentFocusInterval)) {
+  if (
+    areRangesOverlapping(
+      targetInterval.start,
+      targetInterval.end,
+      currentFocusInterval.start,
+      currentFocusInterval.end
+    )
+  ) {
     // don't change focused if new selection in view area
     return currentFocusedDate;
   }

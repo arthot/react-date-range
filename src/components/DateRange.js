@@ -38,7 +38,7 @@ class DateRange extends Component {
       const dayOffset = differenceInCalendarDays(endDate, startDate);
       startDate = value;
       endDate = moveRangeOnFirstSelection ? addDays(value, dayOffset) : value;
-      if (maxDate) endDate = min([endDate, maxDate]);
+      if (maxDate) endDate = min(endDate, maxDate);
       nextFocusRange = [focusedRange[0], 1];
     } else {
       endDate = value;

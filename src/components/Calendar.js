@@ -8,7 +8,7 @@ import ReactList from 'react-list';
 import {
   addMonths,
   format,
-  eachDayOfInterval,
+  eachDay,
   startOfWeek,
   endOfWeek,
   isSameDay,
@@ -24,7 +24,7 @@ import {
   min,
   max,
 } from 'date-fns';
-import defaultLocale from 'date-fns/locale/en-US';
+import defaultLocale from 'date-fns/locale/en';
 import coreStyles from '../styles';
 
 class Calendar extends PureComponent {
@@ -139,11 +139,16 @@ class Calendar extends PureComponent {
       setYear: () => setYear(focusedDate, value),
       set: () => value,
     };
-    const newDate = min([max([modeMapper[mode](), this.props.minDate]), this.props.maxDate]);
+    const newDate = min(max(modeMapper[mode](), this.props.minDate), this.props.maxDate);
     this.focusToDate(newDate, this.props, false);
   }
   handleRangeFocusChange(rangesIndex, rangeItemIndex) {
     this.props.onRangeFocusChange && this.props.onRangeFocusChange([rangesIndex, rangeItemIndex]);
+  }
+  getMonths(locale) {
+    return Array.from({ length: 12 }, (v, k) => k + 1).map(i =>
+      locale.format.formatters.MMMM(new Date(2020, i, 1))
+    );
   }
   renderMonthAndYear(focusedDate, changeShownDate, props) {
     const { showMonthArrow, locale, minDate, maxDate } = props;
@@ -165,7 +170,7 @@ class Calendar extends PureComponent {
             <select
               value={focusedDate.getMonth()}
               onChange={e => changeShownDate(e.target.value, 'setMonth')}>
-              {locale.localize.months().map((month, i) => (
+              {this.getMonths(locale).map((month, i) => (
                 <option key={i} value={i}>
                   {month}
                 </option>
@@ -203,14 +208,13 @@ class Calendar extends PureComponent {
     const now = new Date();
     return (
       <div className={this.styles.weekDays}>
-        {eachDayOfInterval({
-          start: startOfWeek(now, this.dateOptions),
-          end: endOfWeek(now, this.dateOptions),
-        }).map((day, i) => (
-          <span className={this.styles.weekDay} key={i}>
-            {format(day, 'ddd', this.dateOptions)}
-          </span>
-        ))}
+        {eachDay(startOfWeek(now, this.dateOptions), endOfWeek(now, this.dateOptions)).map(
+          (day, i) => (
+            <span className={this.styles.weekDay} key={i}>
+              {format(day, 'ddd', this.dateOptions)}
+            </span>
+          )
+        )}
       </div>
     );
   }

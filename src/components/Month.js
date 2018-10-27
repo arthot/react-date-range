@@ -12,8 +12,8 @@ import {
   isSameDay,
   isAfter,
   isSunday,
-  isWithinInterval,
-  eachDayOfInterval,
+  isWithinRange,
+  eachDay,
 } from 'date-fns';
 import { getMonthDisplayRange } from '../utils';
 
@@ -21,10 +21,7 @@ function renderWeekdays(styles, dateOptions) {
   const now = new Date();
   return (
     <div className={styles.weekDays}>
-      {eachDayOfInterval({
-        start: startOfWeek(now, dateOptions),
-        end: endOfWeek(now, dateOptions),
-      }).map((day, i) => (
+      {eachDay(startOfWeek(now, dateOptions), endOfWeek(now, dateOptions)).map((day, i) => (
         <span className={styles.weekDay} key={i}>
           {format(day, 'ddd', dateOptions)}
         </span>
@@ -65,42 +62,37 @@ class Month extends PureComponent {
         ) : null}
         {this.props.showWeekDays && renderWeekdays(styles, this.props.dateOptions)}
         <div className={styles.days} onMouseLeave={this.props.onMouseLeave}>
-          {eachDayOfInterval({ start: monthDisplay.start, end: monthDisplay.end }).map(
-            (day, index) => {
-              const isStartOfMonth = isSameDay(day, monthDisplay.startDateOfMonth);
-              const isEndOfMonth = isSameDay(day, monthDisplay.endDateOfMonth);
-              const isOutsideMinMax =
-                (minDate && isBefore(day, minDate)) || (maxDate && isAfter(day, maxDate));
-              return (
-                <DayCell
-                  {...this.props}
-                  ranges={ranges}
-                  day={day}
-                  preview={showPreview ? this.props.preview : null}
-                  isSunday={isSunday(day)}
-                  isToday={isSameDay(day, now)}
-                  isStartOfWeek={isSameDay(day, startOfWeek(day, this.props.dateOptions))}
-                  isEndOfWeek={isSameDay(day, endOfWeek(day, this.props.dateOptions))}
-                  isStartOfMonth={isStartOfMonth}
-                  isEndOfMonth={isEndOfMonth}
-                  key={index}
-                  disabled={isOutsideMinMax}
-                  isPassive={
-                    !isWithinInterval(day, {
-                      start: monthDisplay.startDateOfMonth,
-                      end: monthDisplay.endDateOfMonth,
-                    })
-                  }
-                  styles={styles}
-                  onMouseDown={this.props.onDragSelectionStart}
-                  onMouseUp={this.props.onDragSelectionEnd}
-                  onMouseEnter={this.props.onDragSelectionMove}
-                  dragRange={drag.range}
-                  drag={drag.status}
-                />
-              );
-            }
-          )}
+          {eachDay(monthDisplay.start, monthDisplay.end).map((day, index) => {
+            const isStartOfMonth = isSameDay(day, monthDisplay.startDateOfMonth);
+            const isEndOfMonth = isSameDay(day, monthDisplay.endDateOfMonth);
+            const isOutsideMinMax =
+              (minDate && isBefore(day, minDate)) || (maxDate && isAfter(day, maxDate));
+            return (
+              <DayCell
+                {...this.props}
+                ranges={ranges}
+                day={day}
+                preview={showPreview ? this.props.preview : null}
+                isSunday={isSunday(day)}
+                isToday={isSameDay(day, now)}
+                isStartOfWeek={isSameDay(day, startOfWeek(day, this.props.dateOptions))}
+                isEndOfWeek={isSameDay(day, endOfWeek(day, this.props.dateOptions))}
+                isStartOfMonth={isStartOfMonth}
+                isEndOfMonth={isEndOfMonth}
+                key={index}
+                disabled={isOutsideMinMax}
+                isPassive={
+                  !isWithinRange(day, monthDisplay.startDateOfMonth, monthDisplay.endDateOfMonth)
+                }
+                styles={styles}
+                onMouseDown={this.props.onDragSelectionStart}
+                onMouseUp={this.props.onDragSelectionEnd}
+                onMouseEnter={this.props.onDragSelectionMove}
+                dragRange={drag.range}
+                drag={drag.status}
+              />
+            );
+          })}
         </div>
       </div>
     );
