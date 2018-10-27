@@ -278,7 +278,7 @@ var Calendar = function (_PureComponent) {
     key: 'getMonths',
     value: function getMonths(locale) {
       return Array.from({ length: 12 }, function (v, k) {
-        return k + 1;
+        return k;
       }).map(function (i) {
         return locale.format.formatters.MMMM(new Date(2020, i, 1));
       });

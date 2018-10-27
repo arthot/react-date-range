@@ -146,7 +146,7 @@ class Calendar extends PureComponent {
     this.props.onRangeFocusChange && this.props.onRangeFocusChange([rangesIndex, rangeItemIndex]);
   }
   getMonths(locale) {
-    return Array.from({ length: 12 }, (v, k) => k + 1).map(i =>
+    return Array.from({ length: 12 }, (v, k) => k).map(i =>
       locale.format.formatters.MMMM(new Date(2020, i, 1))
     );
   }
